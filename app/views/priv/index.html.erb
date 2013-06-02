@@ -1,0 +1,63 @@
+<div id="priv-auth">
+	<p><%= image_tag "auth.#{@provider}.64.png", :width => 32 %> <strong><%= @name %></strong> <em>(<%= @uid %>@<%= @provider %>)</em> <%= link_to("Kijelentkezés", {:controller => "auth", :action => "logout"}) %></p>
+</div>
+
+<div id="priv-edit" class="white-sheet">
+	<div id="priv-edit-form-container">
+	</div>
+	<div id="priv-edit-results">
+	</div>
+</div>
+
+<div id="priv-list" class="white-sheet">
+	<form id="priv-list-controls">
+		<p>
+			<select id="lang" name="lang">
+				<option value="hu">magyar</option>
+				<option value="nb">bokmål</option>
+			</select>
+			<select id="letter" name="letter">
+			</select>
+			<input id="submit-letter" type="button" value="Lista" />
+		</p>
+		<p>
+			<input id="term" name="term" type="text" />
+			<input id="submit-term" type="button" value="Keresés" />
+		</p>
+		<p>
+			<input id="stat" name="stat" type="checkbox" value="1" checked="checked" /> csak fordítással
+		</p>
+		<p>
+			<input id="submit-new" type="button" value="Új szócikk" />
+		</p>
+	</form>
+	<div id="priv-list-results">
+	</div>
+</div>
+<script type="text/javascript">
+$(document).ready(function() {
+	loadLetters("hu");
+	listLetter("hu", "a", "");
+	loadEntry("hu", "N", "");
+});
+$(window).resize(function() {
+	adjustHeight();
+});
+$("#lang").change(function() {
+	loadLetters($("#lang").val());
+});
+$("#submit-letter").click(function() {
+	listLetter($("#lang").val(), $("#letter").val(), "");
+});
+$("#submit-term").click(function() {
+	listLetter($("#lang").val(), $("#letter").val(), $("#term").val());
+});
+$("#priv-list-controls").submit(function() {
+	listLetter($("#lang").val(), $("#letter").val(), $("#term").val());
+	return false;
+});
+$("#submit-new").click(function() {
+	loadEntry($("#lang").val(), "N", $("#term").val());
+});
+</script>
+

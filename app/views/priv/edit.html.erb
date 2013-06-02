@@ -1,0 +1,58 @@
+<form id="priv-edit-form">
+	<p>
+		<%= image_tag "flag.#{@entry.lang}.png", :style => "vertical-align: middle;" %>
+		<input id="entrylang" name="entrylang" type="hidden" value="<%= @entry.lang %>" />
+		ID: <strong><%= "#{@entry.id}" %></strong><input id="id" name="id" type="hidden" value="<%= @entry.id %>" />
+		Csoport: <input id="entry" name="entry" type="text" value="<%= @entry.entry %>" />
+		Szófaj:
+		<select id="pos" name="pos">
+<%
+case @entry.lang
+when :hu
+	pos = {"ige" => "ige", "fn" => "főnév", "hsz" => "határozószó", "nével" => "névelő", "röv" => "rovidítés", "névm" => "névmás", "mn" => "melléknév", "ksz" => "kötőszó", "módsz" => "módosítószó", "névut" => "névutó", "isz" => "indulatszó", "szn" => "számnév", "igek" => "igekötő"}
+when :nb
+	pos = {"subst" => "substantiv", "verb" => "verb", "adj" => "adjektiv", "adv" => "adverb", "prep" => "preposisjon", "pron" => "pronomen", "tall" => "tallord", "konj" => "konjunksjon", "interj" => "interjeksjon", "fork" => "forkortelse", "inf" => "infinitivsmerke", "art" => "artikkel"}
+end
+pos.each do |key, val|
+	selected = ""
+	if key == @entry.pos.to_s
+		selected = " selected=\"selected\""
+	end
+	concat raw "\t\t\t<option value=\"#{key}\"#{selected}>#{val}</option>"
+end
+%>
+		</select>
+		Státusz:
+			<select id="status" name="status">
+			<% [0, 1, 2].each do |status| %>
+				<% selected = "" %>
+				<% if @entry.status == status %>
+					<% selected = " selected=\"selected\"" %>
+				<% end %>
+				<option value="<%= status %>"<%= selected %>><%= "#{status}" %></option>
+			<% end %>
+			</select>
+			<input id="entry-submit" type="button" value="Mentés" onclick="saveEntry();" />
+			<input id="entry-delete" type="button" value="Törlés" onclick="deleteEntry();" style="color: red; float: right;" />
+		</p>
+	<div id="priv-edit-form-forms">
+		<p style="margin-bottom: 0px;"><strong>Formák:</strong></p>
+		<textarea id="forms" name="forms"><%=
+			@entry.forms.ya2yaml
+		%></textarea>
+	</div>
+	<div id="priv-edit-form-senses">
+		<p>Beszúrás: 
+			<input type="button" value="senseGrp" onclick="insertTag('senseGrp');" />
+			<input type="button" value="sense" onclick="insertTag('sense');" />
+			<input type="button" value="trans" onclick="insertTag('trans');" />
+			<input type="button" value="lbl" onclick="insertTag('lbl');" />
+			<input type="button" value="eg" onclick="insertTag('eg');" />
+		</p>
+		<p style="margin-bottom: 0px;"><strong>Jelentések:</strong></p>
+		<textarea id="trans" name="trans"><%=
+			"#{@entry.trans}" 
+		%></textarea>
+	</div>
+</form>
+

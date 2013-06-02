@@ -1,0 +1,31 @@
+<% if @errors.empty? %>
+	<p><%= @clock.strftime("%H:%M:%S") + ":" %>
+		<span style="font-weight: bold; color: green;">Sikeres mentés.</span>
+		<% if !@addition.nil? %>
+			<span>Az új szócikk azonosítója: <%= @addition %><input id="addition" name="addition" type="hidden" value="<%= @addition %>"></span>
+		<% end %>
+		<span>&raquo; <a href="#" id="ToggleSQL">Mutasd az SQL lekérdezéseket</a></span>
+	</p>
+	<div id="OutputSQL" style="display: none; font-family: monospace; font-size: 75%;">
+		<ul>
+		<% @sql.each do |sql| %>
+			<li><%= "#{sql}" %></li>
+		<% end %>
+		</ul>
+	</div>
+	<script type="text/javascript">
+		$("#ToggleSQL").click(function() {
+			$("#OutputSQL").toggle();
+		});
+	</script>
+<% else %>
+	<p><%= @clock.strftime("%H:%M:%S") + ":" %>
+		<span style="font-weight: bold; color: red;">Hiba történt a mentés során.</span> &raquo; Hibaüzenetek:
+	</p>
+	<ul>
+	<% @errors.each do |error| %>
+		<li><%= error %></li>
+	<% end %>
+	</ul>
+<% end %>
+

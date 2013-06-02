@@ -1,0 +1,11 @@
+#priv-edit {
+	margin: 3em .5em .5em .5em;
+	position: fixed;
+	right: 0px;
+	top: 0px;
+	width: 70%;
+}
+#priv-edit-form-submit {
+	margin-top: 1em;
+}
+

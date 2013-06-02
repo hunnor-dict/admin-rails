@@ -1,0 +1,9 @@
+.CodeMirror-gutter {
+	background-color: #eeeeee;
+}
+.CodeMirror-gutter-text {
+	color: #808080;
+}
+.activeline {
+	background: #e8f2ff !important;
+}

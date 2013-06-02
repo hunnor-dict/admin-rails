@@ -1,0 +1,23 @@
+<% if @deleted %>
+	<p><%= @clock.strftime("%H:%M:%S") + ":" %>
+		<span style="font-weight: bold; color: green;">Sikeres törlés.</span>
+		<span>&raquo; <a href="#" id="ToggleSQL">Mutasd az SQL lekérdezéseket</a></span>
+	</p>
+	<div id="OutputSQL" style="display: none; font-family: monospace; font-size: 75%;">
+		<ul>
+		<% @sql.each do |sql| %>
+			<li><%= "#{sql}" %></li>
+		<% end %>
+		</ul>
+	</div>
+	<script type="text/javascript">
+		$("#ToggleSQL").click(function() {
+			$("#OutputSQL").toggle();
+		});
+	</script>
+<% else %>
+	<p><%= @clock.strftime("%H:%M:%S") + ":" %>
+		<span style="font-weight: bold; color: red;">Hiba történt a törlés során: <%= @error %><br /></span>
+	</p>
+<% end %>
+

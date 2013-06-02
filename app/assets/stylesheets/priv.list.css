@@ -1,0 +1,33 @@
+#priv-list {
+	margin: 3em .5em .5em .5em;
+	width: 25%;
+}
+
+#priv-list-controls {
+	margin-bottom: 1em;
+}
+#priv-list-controls p {
+	margin: 0;
+}
+
+#priv-list-results a {
+	text-decoration: none;
+}
+#priv-list-results a.ref {
+	color: #808080;
+}
+#priv-list-results a.stat0 {
+	color: red;
+}
+#priv-list-results a.stat1 {
+	color: darkOrange;
+}
+#priv-list-results a.stat2 {
+	color: green;
+}
+#priv-list-results p {
+	margin: 0;
+}
+#priv-list-results ul {
+	padding: 0;
+}

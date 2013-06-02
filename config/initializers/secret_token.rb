@@ -1,0 +1,1 @@
+HunNorService::Application.config.secret_token = '46f2019c0928c9f80b21caf9ec436541d8c3c17fdfbaa388315bb7bddbb63ed4e044b00425c7382644c4a92e1bd09edd0dd2149d395321afd18d2de378ebf092'
