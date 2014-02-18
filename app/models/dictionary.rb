@@ -1,6 +1,31 @@
 #encoding: utf-8
 class Dictionary
 
+	def search term, match
+		entries = []
+		langs = [:hu, :nb]
+		langs.each do |lang|
+			entries = entries + search_lang(lang, term, match)
+		end
+		entries
+	end
+
+	def search_lang lang, term, match
+		database = Database.new
+		db = database.db
+		columns = database.columns
+		tables = database.tables lang
+		sql = "SELECT DISTINCT #{columns[:forms][:id]} FROM #{tables[:forms]} WHERE "
+		sql += "#{columns[:forms][:orth]} LIKE '#{term}' AND #{columns[:forms][:status]} > 0"
+		entries = []
+		res = db.query sql
+		res.each do |row|
+			entry = Entry.new lang, row[columns[:forms][:id]], nil, nil
+			entries.push entry
+		end
+		entries
+	end
+
 	def lookup
 		database = Database.new
 		db = database.db

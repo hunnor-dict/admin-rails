@@ -14,6 +14,7 @@ HunNorService::Application.routes.draw do
 	match '/priv/delete', :to => 'priv#delete'
 
 	match '/pub', :to => 'pub#index'
+	match '/pub/search', :to => 'pub#search'
 	match '/pub/suggest', :to => 'pub#suggest'
 
 	match '/pub/log', :to => 'pub#log'
