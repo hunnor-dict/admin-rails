@@ -1,6 +1,49 @@
 #encoding: utf-8
 class Dictionary
 
+	def suggest term
+		suggestions = {}
+		langs = [:hu, :nb]
+		langs.each do |lang|
+			lang_suggestions = suggest_lang lang, term
+			lang_suggestions.each do |lang_suggestion|
+				if suggestions.has_key? lang_suggestion
+					s = suggestions[lang_suggestion]
+					lang_a = s["lang"]
+					lang_a.push lang
+				else
+					suggestions[lang_suggestion] = {"value" => lang_suggestion, "lang" => [lang]}
+				end
+			end
+		end
+		suggestions = suggestions.sort
+		sg = []
+		suggestions.each do |key, val|
+			sg.push val
+			if sg.size >= 20
+				break
+			end
+		end
+		sg
+	end
+
+	def suggest_lang lang, term
+		limit = 20
+		suggestions = []
+		database = Database.new
+		db = database.db
+		columns = database.columns
+		tables = database.tables lang
+		sql = "SELECT DISTINCT #{columns[:forms][:orth]} FROM #{tables[:forms]} WHERE "
+		sql += "#{columns[:forms][:orth]} LIKE '#{term}%' AND #{columns[:forms][:status]} > 0 "
+		sql += "AND #{columns[:forms][:seq]} = 1 ORDER BY #{columns[:forms][:orth]} LIMIT #{limit}"
+		res = db.query sql
+		res.each do |row|
+			suggestions.push row[columns[:forms][:orth]]
+		end
+		suggestions
+	end
+
 	def search term, match
 		entries = {}
 		langs = [:hu, :nb]

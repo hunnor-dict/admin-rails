@@ -11,6 +11,9 @@
 	end
 
 	def suggest
+		dictionary = Dictionary.new
+		@suggestions = dictionary.suggest params[:term]
+		render :json => @suggestions
 	end
 
 	def log
