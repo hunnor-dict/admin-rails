@@ -66,10 +66,8 @@ class Dictionary
 		matches = []
 		sql = "SELECT DISTINCT #{columns[:forms][:entry]} FROM #{tables[:forms]} WHERE "
 		sql += "#{columns[:forms][:orth]} LIKE '#{term}' AND #{columns[:forms][:status]} > 0#{match_condition}"
-		puts "SQL1::#{sql}"
 		res = db.query sql
 		res.each do |row|
-			puts "ROW::#{row[columns[:forms][:entry]]}"
 			matches.push row[columns[:forms][:entry]]
 		end
 		if matches.empty?
@@ -79,7 +77,6 @@ class Dictionary
 		sql = "SELECT * FROM #{tables[:forms]} WHERE "
 		sql += "#{columns[:forms][:entry]} IN (#{matches.join(', ')}) "
 		sql += "ORDER BY #{columns[:forms][:id]}, #{columns[:forms][:par]}, #{columns[:forms][:seq]}"
-		puts "SQL2::#{sql}"
 		pos = nil
 		res = db.query sql
 		res.each do |row|

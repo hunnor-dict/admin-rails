@@ -13,7 +13,7 @@
 	def suggest
 		dictionary = Dictionary.new
 		@suggestions = dictionary.suggest params[:term]
-		render :json => @suggestions
+		render :json => @suggestions, :callback => params[:callback]
 	end
 
 	def log
