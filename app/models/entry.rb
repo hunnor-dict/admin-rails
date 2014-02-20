@@ -3,6 +3,10 @@ class Entry
 
 	attr_accessor :lang, :id, :entry, :form, :forms, :pos, :status, :trans
 
+	def initialize
+		
+	end
+
 	def initialize lang, id, fields, extras
 		@lang = lang
 		if id.nil?

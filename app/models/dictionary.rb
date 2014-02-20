@@ -2,10 +2,10 @@
 class Dictionary
 
 	def search term, match
-		entries = []
+		entries = {}
 		langs = [:hu, :nb]
 		langs.each do |lang|
-			entries = entries + search_lang(lang, term, match)
+			entries[lang] = search_lang lang, term, match
 		end
 		entries
 	end
@@ -15,13 +15,79 @@ class Dictionary
 		db = database.db
 		columns = database.columns
 		tables = database.tables lang
-		sql = "SELECT DISTINCT #{columns[:forms][:id]} FROM #{tables[:forms]} WHERE "
-		sql += "#{columns[:forms][:orth]} LIKE '#{term}' AND #{columns[:forms][:status]} > 0"
-		entries = []
+		match_condition = ""
+		if match == "root"
+			match_condition = " AND #{columns[:forms][:seq]} = 1"
+		end
+		entries = {}
+		matches = []
+		sql = "SELECT DISTINCT #{columns[:forms][:entry]} FROM #{tables[:forms]} WHERE "
+		sql += "#{columns[:forms][:orth]} LIKE '#{term}' AND #{columns[:forms][:status]} > 0#{match_condition}"
+		puts "SQL1::#{sql}"
 		res = db.query sql
 		res.each do |row|
-			entry = Entry.new lang, row[columns[:forms][:id]], nil, nil
-			entries.push entry
+			puts "ROW::#{row[columns[:forms][:entry]]}"
+			matches.push row[columns[:forms][:entry]]
+		end
+		if matches.empty?
+			return entries
+		end
+
+		sql = "SELECT * FROM #{tables[:forms]} WHERE "
+		sql += "#{columns[:forms][:entry]} IN (#{matches.join(', ')}) "
+		sql += "ORDER BY #{columns[:forms][:id]}, #{columns[:forms][:par]}, #{columns[:forms][:seq]}"
+		puts "SQL2::#{sql}"
+		pos = nil
+		res = db.query sql
+		res.each do |row|
+			id = row[columns[:forms][:id]]
+			entry = row[columns[:forms][:entry]]
+			orth = row[columns[:forms][:orth]]
+			pos = row[columns[:forms][:pos]]
+			par = row[columns[:forms][:par]]
+			seq = row[columns[:forms][:seq]]
+			status = row[columns[:forms][:status]]
+			entry_h = {}
+			if entries[entry].nil?
+				entries[entry] = entry_h
+			else
+				entry_h = entries[entry]
+			end
+			if entry_h["id"].nil?
+				entry_h["id"] = entry
+			end
+			if entry_h["pos"].nil?
+				entry_h["pos"] = pos
+			end
+			if entry_h["status"].nil?
+				entry_h["status"] = status
+			end
+			entries[entry]["id"] = entry
+			if id == entry
+				if entry_h["forms"].nil?
+					entry_h["forms"] = {}
+				end
+				forms_h = entry_h["forms"]
+				if forms_h[par].nil?
+					forms_h[par] = {}
+				end
+				par_h = forms_h[par]
+				par_h[seq] = orth
+			else
+				if entry_h["alt"].nil?
+					entry_h["alt"] = {}
+				end
+				alt_h = entry_h["alt"]
+				if alt_h[id].nil?
+					alt_h[id] = {}
+				end
+				id_h = alt_h[id]
+				if id_h[par].nil?
+					id_h[par] = {}
+				end
+				alt_par_h = id_h[par]
+				alt_par_h[seq] = orth
+			end
 		end
 		entries
 	end
