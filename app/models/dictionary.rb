@@ -129,6 +129,19 @@ class Dictionary
 				alt_par_h[seq] = orth
 			end
 		end
+		if $xsl.nil?
+			$xsl = Nokogiri::XSLT(File.read("#{Rails.root.join("public", "hunnor-trans.xsl")}"))
+		end
+		sql = "SELECT * FROM #{tables[:trans]} WHERE #{columns[:trans][:id]} IN (#{matches.join(", ")})"
+		res = db.query sql
+		res.each do |row|
+			id = row[columns[:trans][:id]]
+			trans = row[columns[:trans][:trans]]
+			trans_dom = Nokogiri::XML("<entry>#{trans}</trans>")
+			html = $xsl.transform(trans_dom)
+			entries[id]["trans"] = html.to_xml(:save_with => Nokogiri::XML::Node::SaveOptions::NO_DECLARATION)
+		end
+
 		entries
 	end
 
@@ -243,93 +256,6 @@ class Dictionary
 	def limit
 		@limit
 	end
-
-=begin
-
-	def suggest lang, term, limit
-		if term.nil?
-			return nil
-		end
-		if term.empty?
-			return nil
-		end
-		set_lang ["hu", "nb", "nn"]
-		set_lang lang
-		set_term term
-		set_limit 10
-		set_limit limit
-		suggestions = []
-		@lang.each do |lang_group_key, lang_group_val|
-			lang_group_suggestions = suggest_by_lang_group lang_group_val
-			if !lang_group_suggestions.empty?
-				suggestions[lang_group_key] = merge_lists lang_group_suggestions
-			end
-		end
-		suggestions = slice_lists suggestions		
-	end
-
-	private
-
-	def merge_lists lists
-		ret = []
-		lists.each do |key, list|
-			ret << list
-		end
-		ret
-	end
-
-	def slice_lists lists
-		ret = []
-		limit_2 = @limit * 2
-		left = limit_2
-		lists.each do |key, list|
-			if ret.empty?
-				ret << list
-			else
-				left = left - ret.length
-				if list.length < left
-					ret << list
-				else
-					if ret.length > @limit
-						new_length = limit_2 - list.length
-						if new_length < @limit
-							new_length = @limit
-						end
-						ret = ret[0..new_length]
-					end
-					ret << list
-				end
-			end
-		end
-		if ret.length > limit_2
-			ret = ret[0..limit2]
-		end
-		ret
-	end
-
-	def suggestions_by_lang lang_key
-		ret = []
-		ret
-	end
-
-=begin
-
-	def suggestions_from_table key, term
-		suggestions = []
-		db_res = db.query "
-			SELECT DISTINCT #{@db_columns[:forms][:orth]}
-			FROM #{@db_tables[key][:forms]}
-			WHERE #{@db_columns[:forms][:orth]} LIKE '#{term}%'
-			AND #{@db_columns[:forms][:seq]} < 2
-			ORDER BY #{@db_columns[:forms][:orth]}"
-		db_res.each do |db_ret|
-			suggestion = {:lang => key, :value => db_ret[@db_columns[:forms][:orth]]}
-			suggestions.push suggestion
-		end
-		suggestions
-	end
-
-=end
 
 	def def_letters
 		letters = {

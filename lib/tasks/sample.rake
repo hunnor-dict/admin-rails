@@ -109,7 +109,7 @@ def populate_nob_v
 		"('21', '20', 'vann', 'subst', '810', '3', '2')," \
 		"('21', '20', 'vannene', 'subst', '810', '4', '2');"
 	$DB_LINK.query "INSERT INTO hn_nob_tr_hun_tmp (id, trans) VALUES " \
-		"('20', '<senseGrp><sense><trans>víz</trans></sense></senseGrp>');"
+		"('20', '<senseGrp><sense><trans>víz</trans><trans>dihidrogén-monoxid</trans></sense><sense><trans>tó</trans></sense></senseGrp>');"
 end
 
 def populate_editors
