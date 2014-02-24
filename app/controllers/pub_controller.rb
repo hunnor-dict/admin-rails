@@ -7,7 +7,7 @@
 	def search
 		dictionary = Dictionary.new
 		@entries = dictionary.search params[:term], ""
-		render :json => @entries
+		render :json => @entries, :callback => params[:callback]
 	end
 
 	def suggest
