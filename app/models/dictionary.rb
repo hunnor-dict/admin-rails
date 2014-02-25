@@ -139,7 +139,9 @@ class Dictionary
 			trans = row[columns[:trans][:trans]]
 			trans_dom = Nokogiri::XML("<entry>#{trans}</trans>")
 			html = $xsl.transform(trans_dom)
-			entries[id]["trans"] = html.to_xml(:save_with => Nokogiri::XML::Node::SaveOptions::NO_DECLARATION)
+			entries[id]["trans"] = html.to_xml(
+				:save_with => Nokogiri::XML::Node::SaveOptions::NO_DECLARATION | Nokogiri::XML::Node::SaveOptions::AS_XML)
+				.gsub(/\n[ ]+/, "")
 		end
 
 		entries

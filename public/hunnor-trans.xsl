@@ -60,11 +60,11 @@
 	<span class="trans"><xsl:apply-templates/></span>
 </xsl:template>
 	
-<xsl:template name="eg">
-	<xsl:if test="position() > 1">
+<xsl:template match="eg">
+	<xsl:if test="preceding-sibling::trans or preceding-sibling::eg">
 		<xsl:text>;</xsl:text>
 	</xsl:if>
-	<xsl:text> </xsl:text>
+	<span class="glue"><xsl:text> </xsl:text></span>
 	<xsl:apply-templates/>
 </xsl:template>
 
