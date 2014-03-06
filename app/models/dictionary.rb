@@ -1,6 +1,24 @@
 #encoding: utf-8
 class Dictionary
 
+	def stats
+		h = {}
+		langs = [:hu, :nb]
+		database = Database.new
+		db = database.db
+		columns = database.columns
+		langs.each do |lang|
+			tables = database.tables lang
+			sql = "SELECT COUNT(DISTINCT #{columns[:forms][:id]}) AS n FROM #{tables[:forms]} WHERE "
+			sql += "#{columns[:forms][:status]} > 0"
+			res = db.query sql
+			res.each do |row|
+				h.store lang, row["n"]
+			end
+		end
+		return h
+	end
+
 	def suggest term
 		suggestions = {}
 		langs = [:hu, :nb]

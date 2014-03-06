@@ -16,6 +16,7 @@ HunNorService::Application.routes.draw do
 	match '/pub', :to => 'pub#index'
 	match '/pub/search', :to => 'pub#search'
 	match '/pub/suggest', :to => 'pub#suggest'
+	match '/pub/stat', :to => 'pub#stat'
 
 	match '/pub/log', :to => 'pub#log'
 

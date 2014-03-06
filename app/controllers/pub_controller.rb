@@ -16,6 +16,12 @@
 		render :json => @suggestions, :callback => params[:callback]
 	end
 
+	def stat
+		dictionary = Dictionary.new
+		@stats = dictionary.stats
+		render :json => @stats, :callback => params[:callback]
+	end
+
 	def log
 	end
 
