@@ -1,5 +1,7 @@
 ﻿class PubController < ApplicationController
 
+	after_filter :set_access_control_headers
+
 	def index
 		redirect_to :controller => "auth", :action => "index"
 	end
@@ -22,6 +24,11 @@
 		render :json => @stats, :callback => params[:callback]
 	end
 
+	def set_access_control_headers 
+		headers["Access-Control-Allow-Origin"] = "http://hunnor:8082"
+		headers["Access-Control-Request-Method"] = "*"
+	end
+	
 	def log
 	end
 
