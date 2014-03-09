@@ -162,7 +162,7 @@ class Dictionary
 				.gsub(/\n[ ]+/, "")
 		end
 
-		entries
+		entries.values
 	end
 
 	def lookup
