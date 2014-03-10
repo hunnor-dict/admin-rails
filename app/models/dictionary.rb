@@ -89,7 +89,7 @@ class Dictionary
 			matches.push row[columns[:forms][:entry]]
 		end
 		if matches.empty?
-			return entries
+			return []
 		end
 
 		sql = "SELECT * FROM #{tables[:forms]} WHERE "
