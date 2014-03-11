@@ -28,9 +28,23 @@
 		headers["Access-Control-Allow-Origin"] = "http://hunnor:8082"
 		headers["Access-Control-Request-Method"] = "*"
 	end
-	
-	def log
+
+	def hits
+		dictionary = Dictionary.new
+		@hits = dictionary.hits
+		render :json => @hits, :callback => params[:callback]
+	end
+
+	def searches
+		dictionary = Dictionary.new
+		@searches = dictionary.searches
+		render :json => @searches, :callback => params[:callback]
+	end
+
+	def missing
+		dictionary = Dictionary.new
+		@missing = dictionary.missing
+		render :json => @missing, :callback => params[:callback]
 	end
 
 end
-
