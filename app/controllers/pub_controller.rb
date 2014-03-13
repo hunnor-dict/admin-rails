@@ -24,11 +24,6 @@
 		render :json => @stats, :callback => params[:callback]
 	end
 
-	def set_access_control_headers 
-		headers["Access-Control-Allow-Origin"] = "http://hunnor:8082"
-		headers["Access-Control-Request-Method"] = "*"
-	end
-
 	def hits
 		dictionary = Dictionary.new
 		@hits = dictionary.hits
@@ -45,6 +40,11 @@
 		dictionary = Dictionary.new
 		@missing = dictionary.missing
 		render :json => @missing, :callback => params[:callback]
+	end
+
+	def set_access_control_headers 
+		headers["Access-Control-Allow-Origin"] = "http://hunnor:8082"
+		headers["Access-Control-Request-Method"] = "*"
 	end
 
 end
