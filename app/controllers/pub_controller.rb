@@ -43,7 +43,7 @@
 	end
 
 	def set_access_control_headers 
-		headers["Access-Control-Allow-Origin"] = "http://hunnor:8082"
+		headers["Access-Control-Allow-Origin"] = "http://hunnor-dict.ovitas.no"
 		headers["Access-Control-Request-Method"] = "*"
 	end
 
