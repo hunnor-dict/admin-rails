@@ -108,9 +108,17 @@ class Dictionary
 	def search term, match
 		entries = {}
 		langs = [:hu, :nb]
+		res = "0"
 		langs.each do |lang|
 			entries[lang] = search_lang lang, term, match
+			if !entries[lang].empty?
+				res = "1"
+			end
 		end
+		database = Database.new
+		db = database.db
+		sql = "INSERT INTO logSearch (qTerm, qRes, qSrc) VALUES ('#{term}', '#{res}', '')"
+		db.query sql
 		entries
 	end
 
