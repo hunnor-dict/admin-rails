@@ -8,7 +8,7 @@
 
 	def search
 		dictionary = Dictionary.new
-		@entries = dictionary.search params[:term], ""
+		@entries = dictionary.search params[:term], params[:match]
 		render :json => @entries, :callback => params[:callback]
 	end
 
