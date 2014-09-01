@@ -182,7 +182,7 @@ class Entry
 			end
 			forms_new.each do |par_key, par_val|
 				par_val.each do |seq_key, seq_val|
-					sql.push "INSERT INTO #{tables[:forms]} (#{columns[:forms][:id]}, #{columns[:forms][:entry]}, #{columns[:forms][:orth]}, #{columns[:forms][:pos]}, #{columns[:forms][:par]}, #{columns[:forms][:seq]}, #{columns[:forms][:status]}) VALUES('#{db.escape(@id)}', '#{db.escape(@entry)}', '#{db.escape(seq_val)}', '#{db.escape(values[:pos])}', '#{db.escape(par_key)}', '#{db.escape(seq_key)}', '#{db.escape(values[:status])}')"
+					sql.push "INSERT INTO #{tables[:forms]} (#{columns[:forms][:id]}, #{columns[:forms][:entry]}, #{columns[:forms][:orth]}, #{columns[:forms][:pos]}, #{columns[:forms][:par]}, #{columns[:forms][:seq]}, #{columns[:forms][:status]}) VALUES('#{@id}', '#{@entry}', '#{db.escape(seq_val)}', '#{db.escape(values[:pos])}', '#{db.escape(par_key)}', '#{db.escape(seq_key)}', '#{db.escape(values[:status])}')"
 				end
 			end
 		else
@@ -202,7 +202,7 @@ class Entry
 			end
 			if !form_global_changes.empty?
 				changes = form_global_changes.join(", ")
-				sql.push "UPDATE #{tables[:forms]} SET #{changes} WHERE #{columns[:forms][:id]} = '#{db.escape(@id)}'"
+				sql.push "UPDATE #{tables[:forms]} SET #{changes} WHERE #{columns[:forms][:id]} = '#{@id}'"
 			end
 			forms_old = @forms
 			forms_old_a = []
@@ -221,11 +221,11 @@ class Entry
 			added_forms = forms_new_a - forms_old_a
 			removed_forms.each do |removed_form|
 				rm_a = removed_form.split ";"
-				sql.push "DELETE FROM #{tables[:forms]} WHERE #{columns[:forms][:id]} = '#{db.escape(@id)}' AND #{columns[:forms][:par]} = '#{db.escape(rm_a[0])}' AND #{columns[:forms][:seq]} = '#{db.escape(rm_a[1])}' AND #{columns[:forms][:orth]} = '#{db.escape(rm_a[2])}'"
+				sql.push "DELETE FROM #{tables[:forms]} WHERE #{columns[:forms][:id]} = '#{@id}' AND #{columns[:forms][:par]} = '#{db.escape(rm_a[0])}' AND #{columns[:forms][:seq]} = '#{db.escape(rm_a[1])}' AND #{columns[:forms][:orth]} = '#{db.escape(rm_a[2])}'"
 			end
 			added_forms.each do |added_form|
 				add_a = added_form.split ";"
-				sql.push "INSERT INTO #{tables[:forms]} (#{columns[:forms][:id]}, #{columns[:forms][:entry]}, #{columns[:forms][:orth]}, #{columns[:forms][:pos]}, #{columns[:forms][:par]}, #{columns[:forms][:seq]}, #{columns[:forms][:status]}) VALUES ('#{db.escape(@id)}', '#{db.escape(@entry)}', '#{db.escape(add_a[2])}', '#{db.escape(values[:pos])}', '#{db.escape(add_a[0])}', '#{db.escape(add_a[1])}', '#{db.escape(values[:status])}')"
+				sql.push "INSERT INTO #{tables[:forms]} (#{columns[:forms][:id]}, #{columns[:forms][:entry]}, #{columns[:forms][:orth]}, #{columns[:forms][:pos]}, #{columns[:forms][:par]}, #{columns[:forms][:seq]}, #{columns[:forms][:status]}) VALUES ('#{@id}', '#{@entry}', '#{db.escape(add_a[2])}', '#{db.escape(values[:pos])}', '#{db.escape(add_a[0])}', '#{db.escape(add_a[1])}', '#{db.escape(values[:status])}')"
 			end
 		end
 
