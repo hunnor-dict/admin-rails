@@ -233,7 +233,7 @@ class Dictionary
 					end
 				end
 				if !@term.nil?
-					conditions[:orth] = " #{columns[:forms][:orth]} LIKE '#{@term}%'"
+					conditions[:orth] = " #{columns[:forms][:orth]} LIKE '#{db.escape(@term)}%'"
 				end
 				case @stat
 				when "1"
