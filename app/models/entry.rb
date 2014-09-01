@@ -41,7 +41,7 @@ class Entry
 				return
 			end
 			columns = database.columns
-			eXistenZ_res = db.query "SELECT #{columns[:forms][:id]} FROM #{tables[:forms]} WHERE #{columns[:forms][:id]} = '#{db.escape(@id)}'"
+			eXistenZ_res = db.query "SELECT #{columns[:forms][:id]} FROM #{tables[:forms]} WHERE #{columns[:forms][:id]} = '#{@id}'"
 			if eXistenZ_res.count == 0
 				@exists = false
 				database.close
@@ -50,7 +50,7 @@ class Entry
 				@exists = true
 			end
 			@forms = {}
-			res = db.query "SELECT * FROM #{tables[:forms]} WHERE #{columns[:forms][:id]} = '#{db.escape(@id)}' ORDER BY #{columns[:forms][:par]}, #{columns[:forms][:seq]}"
+			res = db.query "SELECT * FROM #{tables[:forms]} WHERE #{columns[:forms][:id]} = '#{@id}' ORDER BY #{columns[:forms][:par]}, #{columns[:forms][:seq]}"
 			res.each do |row|
 				if @form.nil?
 					@form = row[columns[:forms][:orth]]
@@ -68,7 +68,7 @@ class Entry
 				case fields[:trans]
 				when true
 					@trans = "<senseGrp>\n  <sense>\n    <trans></trans>\n  </sense>\n</senseGrp>\n"
-					res = db.query "SELECT #{columns[:trans][:trans]} FROM #{tables[:trans]} WHERE #{columns[:trans][:id]} = '#{db.escape(@id)}'"
+					res = db.query "SELECT #{columns[:trans][:trans]} FROM #{tables[:trans]} WHERE #{columns[:trans][:id]} = '#{@id}'"
 					res.each do |row|
 						@trans = row[columns[:trans][:trans]]
 					end
@@ -87,7 +87,7 @@ class Entry
 		db = database.db
 		tables = database.tables @lang
 		columns = database.columns
-		entry_res = db.query("SELECT #{columns[:forms][:entry]} FROM #{tables[:forms]} WHERE #{columns[:forms][:entry]} = '#{db.escape(entry)}'")
+		entry_res = db.query("SELECT #{columns[:forms][:entry]} FROM #{tables[:forms]} WHERE #{columns[:forms][:entry]} = '#{entry}'")
 		if entry_res.count == 0
 			exists = false
 		else
@@ -182,14 +182,14 @@ class Entry
 			end
 			forms_new.each do |par_key, par_val|
 				par_val.each do |seq_key, seq_val|
-					sql.push "INSERT INTO #{tables[:forms]} (#{columns[:forms][:id]}, #{columns[:forms][:entry]}, #{columns[:forms][:orth]}, #{columns[:forms][:pos]}, #{columns[:forms][:par]}, #{columns[:forms][:seq]}, #{columns[:forms][:status]}) VALUES('#{@id}', '#{@entry}', '#{db.escape(seq_val)}', '#{db.escape(values[:pos])}', '#{db.escape(par_key)}', '#{db.escape(seq_key)}', '#{db.escape(values[:status])}')"
+					sql.push "INSERT INTO #{tables[:forms]} (#{columns[:forms][:id]}, #{columns[:forms][:entry]}, #{columns[:forms][:orth]}, #{columns[:forms][:pos]}, #{columns[:forms][:par]}, #{columns[:forms][:seq]}, #{columns[:forms][:status]}) VALUES('#{@id}', '#{@entry}', '#{db.escape(seq_val)}', '#{db.escape(values[:pos])}', '#{db.escape(par_key)}', '#{seq_key}', '#{values[:status]}')"
 				end
 			end
 		else
 			action = "update"
 			form_global_changes = []
 			if @entry != values[:entry].to_i
-				form_global_changes.push "#{columns[:forms][:entry]} = '#{db.escape(values[:entry])}'"
+				form_global_changes.push "#{columns[:forms][:entry]} = '#{values[:entry]}'"
 				@entry = values[:entry]
 			end
 			if @pos != values[:pos]
@@ -197,7 +197,7 @@ class Entry
 				@pos = values[:pos]
 			end
 			if @status != values[:status].to_i
-				form_global_changes.push "#{columns[:forms][:status]} = '#{db.escape(values[:status])}'"
+				form_global_changes.push "#{columns[:forms][:status]} = '#{values[:status]}'"
 				@status = values[:status]
 			end
 			if !form_global_changes.empty?
@@ -221,11 +221,11 @@ class Entry
 			added_forms = forms_new_a - forms_old_a
 			removed_forms.each do |removed_form|
 				rm_a = removed_form.split ";"
-				sql.push "DELETE FROM #{tables[:forms]} WHERE #{columns[:forms][:id]} = '#{@id}' AND #{columns[:forms][:par]} = '#{db.escape(rm_a[0])}' AND #{columns[:forms][:seq]} = '#{db.escape(rm_a[1])}' AND #{columns[:forms][:orth]} = '#{db.escape(rm_a[2])}'"
+				sql.push "DELETE FROM #{tables[:forms]} WHERE #{columns[:forms][:id]} = '#{@id}' AND #{columns[:forms][:par]} = '#{db.escape(rm_a[0])}' AND #{columns[:forms][:seq]} = '#{rm_a[1]}' AND #{columns[:forms][:orth]} = '#{db.escape(rm_a[2])}'"
 			end
 			added_forms.each do |added_form|
 				add_a = added_form.split ";"
-				sql.push "INSERT INTO #{tables[:forms]} (#{columns[:forms][:id]}, #{columns[:forms][:entry]}, #{columns[:forms][:orth]}, #{columns[:forms][:pos]}, #{columns[:forms][:par]}, #{columns[:forms][:seq]}, #{columns[:forms][:status]}) VALUES ('#{@id}', '#{@entry}', '#{db.escape(add_a[2])}', '#{db.escape(values[:pos])}', '#{db.escape(add_a[0])}', '#{db.escape(add_a[1])}', '#{db.escape(values[:status])}')"
+				sql.push "INSERT INTO #{tables[:forms]} (#{columns[:forms][:id]}, #{columns[:forms][:entry]}, #{columns[:forms][:orth]}, #{columns[:forms][:pos]}, #{columns[:forms][:par]}, #{columns[:forms][:seq]}, #{columns[:forms][:status]}) VALUES ('#{@id}', '#{@entry}', '#{db.escape(add_a[2])}', '#{db.escape(values[:pos])}', '#{db.escape(add_a[0])}', '#{add_a[1]}', '#{values[:status]}')"
 			end
 		end
 
@@ -234,14 +234,14 @@ class Entry
 		if trans_errors.empty?
 			if values[:trans] != @trans
 				if action == "update"
-					trans_check_res = db.query "SELECT id FROM #{tables[:trans]} WHERE id = '#{db.escape(@id)}'"
+					trans_check_res = db.query "SELECT id FROM #{tables[:trans]} WHERE id = '#{@id}'"
 					if trans_check_res.size == 0
-						sql.push "INSERT INTO #{tables[:trans]} (#{columns[:trans][:id]}, #{columns[:trans][:trans]}) VALUES ('#{db.escape(@id)}', '#{db.escape(values[:trans])}')"
+						sql.push "INSERT INTO #{tables[:trans]} (#{columns[:trans][:id]}, #{columns[:trans][:trans]}) VALUES ('#{@id}', '#{db.escape(values[:trans])}')"
 					else
-						sql.push "UPDATE #{tables[:trans]} SET #{columns[:trans][:trans]} = '#{db.escape(values[:trans])}' WHERE #{columns[:trans][:id]} = '#{db.escape(id)}'"
+						sql.push "UPDATE #{tables[:trans]} SET #{columns[:trans][:trans]} = '#{db.escape(values[:trans])}' WHERE #{columns[:trans][:id]} = '#{id}'"
 					end
 				else
-					sql.push "INSERT INTO #{tables[:trans]} (#{columns[:trans][:id]}, #{columns[:trans][:trans]}) VALUES ('#{db.escape(@id)}', '#{db.escape(values[:trans])}')"
+					sql.push "INSERT INTO #{tables[:trans]} (#{columns[:trans][:id]}, #{columns[:trans][:trans]}) VALUES ('#{@id}', '#{db.escape(values[:trans])}')"
 				end
 			end
 		else
