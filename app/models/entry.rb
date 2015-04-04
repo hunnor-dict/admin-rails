@@ -56,7 +56,9 @@ class Entry
 					@form = row[columns[:forms][:orth]]
 				end
 				@entry = row[columns[:forms][:entry]]
-				@pos = row[columns[:forms][:pos]]
+				if @pos.nil?
+					@pos = row[columns[:forms][:pos]]
+				end
 				@status = row[columns[:forms][:status]]
 				if @forms[row[columns[:forms][:par]]].nil?
 					@forms[row[columns[:forms][:par]]] = {}
