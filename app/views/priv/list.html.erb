@@ -6,7 +6,7 @@
 	<% @entries.each do |entry| %>
 		<li>
 		<% if @lang == "nb" %>
-			<%= link_to "[B]", entry.bob_link(:fallback), {:target => "_blank", :class => "ref"} %>
+			<%= link_to "[B]", entry.bob_link(:new), {:target => "_blank", :class => "ref"} %>
 		<% end %>
 		<%= raw "<a href=\"javascript:loadEntry('#{entry.lang}', '#{entry.id}', null);\" class=\"stat#{entry.status}\"><strong>#{entry.form}</strong></a> #{entry.pos}" %>
 		<% if @lang == "nb" %>
