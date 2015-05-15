@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'rails', '3.2.8'
+gem 'rails', '4.2.1'
 
 gem 'omniauth'
 gem 'omniauth-facebook'
@@ -12,3 +12,6 @@ gem 'mysql2'
 gem 'ya2yaml'
 gem 'nokogiri'
 
+gem 'sass-rails'
+gem 'coffee-rails'
+gem 'uglifier'

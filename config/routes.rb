@@ -2,23 +2,24 @@ HunNorService::Application.routes.draw do
 
 	root :to => 'auth#index'
 
-	match '/auth/:provider/callback', :to => 'auth#callback'
-	match '/auth/failure', :to => 'auth#failure'
-	match '/auth/logout', :to => 'auth#logout'
-	match '/auth/unauthorized', :to => 'auth#unauthorized'
+	get '/auth/:provider/callback', :to => 'auth#callback'
+	get '/auth/failure', :to => 'auth#failure'
+	get '/auth/logout', :to => 'auth#logout'
+	get '/auth/unauthorized', :to => 'auth#unauthorized'
 
-	match '/priv', :to => 'priv#index'
-	match '/priv/list', :to => 'priv#list'
-	match '/priv/edit', :to => 'priv#edit'
-	match '/priv/save', :to => 'priv#save'
-	match '/priv/delete', :to => 'priv#delete'
+	get '/priv', :to => 'priv#index'
+	get '/priv/list', :to => 'priv#list'
+	get '/priv/edit', :to => 'priv#edit'
+	get '/priv/save', :to => 'priv#save'
+	get '/priv/delete', :to => 'priv#delete'
 
-	match '/pub', :to => 'pub#index'
-	match '/pub/search', :to => 'pub#search'
-	match '/pub/suggest', :to => 'pub#suggest'
+	get '/pub', :to => 'pub#index'
+	get '/pub/search', :to => 'pub#search'
+	get '/pub/suggest', :to => 'pub#suggest'
 
-	match '/stat/count', :to => 'pub#stat'
-	match '/stat/hits', :to => 'pub#hits'
-	match '/stat/searches', :to => 'pub#searches'
-	match '/stat/missing', :to => 'pub#missing'
+	get '/stat/count', :to => 'pub#stat'
+	get '/stat/hits', :to => 'pub#hits'
+	get '/stat/searches', :to => 'pub#searches'
+	get '/stat/missing', :to => 'pub#missing'
+
 end
