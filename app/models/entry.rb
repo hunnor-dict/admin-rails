@@ -313,7 +313,344 @@ class Entry
 			link = "http://www.nob-ordbok.uio.no/perl/ordbok.cgi?OPP=#{@form}&bokmaal=+&ordbok=begge"
 		end
 	end
-	
+
+	def to_xml_doc
+		additional_forms = []
+		additional_ids = get_ids_from_entry
+		additional_ids.each do |additional_id|
+			additional_form = load_forms_for_id additional_id
+			additional_forms.push additional_form
+		end
+		builder = Nokogiri::XML::Builder.new do |document|
+			document.hnDict(:xmlns => "http://dict.hunnor.net") do |hn_dict|
+			hn_dict.entryGrp do |entry_grp|
+			entry_grp.entry(:id => @id) do |entry|
+				entry.formGrp do |formGrp|
+					formGrp.form(:primary => "yes") do |form|
+						form.orth do |orth|
+							# orth/@n only used in PDF
+							orth.text @form
+						end
+						form.pos do |pos|
+							pos.text @pos
+						end
+						infl_codes_str = @forms.keys.join ":"
+						h = get_infl_codes infl_codes_str
+						if !h["bob"].nil?
+							form.inflCode(:type => "bob") do |infl_code|
+								infl_code.text h["bob"]
+							end
+						end
+						if !h["suff"].nil?
+							form.inflCode(:type => "suff") do |infl_code|
+								infl_code.text h["suff"]
+							end
+						end
+						forms_a_a = get_forms_a_a @forms
+						forms_a_a.each_with_index do |forms_a_val, forms_a_key|
+							if !forms_a_val.empty?
+							form.inflPar do |infl_par|
+								forms_a_val.each_with_index do |ff_val, ff_key|
+									infl_par.inflSeq(:form => "#{forms_a_key}-#{ff_key}") do |infl_seq|
+										infl_seq.text ff_val
+									end
+								end
+							end
+							end
+						end
+					end
+
+					additional_forms.each do |additional_form|
+						formGrp.form(:primary => "no") do |form|
+							first_par_key = additional_form.keys[0]
+							seqs = additional_form[first_par_key]
+							first_seq_key = seqs.keys[0]
+							form_orth = seqs[first_seq_key]
+							form.orth do |orth|
+								# orth/@n only used in PDF
+								orth.text form_orth
+							end
+							infl_codes_str = forms.keys.join ":"
+							h = get_infl_codes infl_codes_str
+							if !h["bob"].nil?
+								form.inflCode(:type => "bob") do |infl_code|
+									infl_code.text h["bob"]
+								end
+							end
+							if !h["suff"].nil?
+								form.inflCode(:type => "suff") do |infl_code|
+									infl_code.text h["suff"]
+								end
+							end
+							forms_a_a = get_forms_a_a additional_form
+							forms_a_a.each_with_index do |forms_a_val, forms_a_key|
+								if !forms_a_val.empty?
+								form.inflPar do |infl_par|
+									forms_a_val.each_with_index do |ff_val, ff_key|
+										infl_par.inflSeq(:form => "#{forms_a_key}-#{ff_key}") do |infl_seq|
+											infl_seq.text ff_val
+										end
+									end
+								end
+								end
+							end
+						end
+					end
+
+				end
+			end
+			end
+			end
+		end
+		document = builder.doc
+		root = document.root
+		entry = root.at "entryGrp/entry"
+		trans_without_spaces = remove_spaces @trans
+		trans_dom = Nokogiri::XML trans_without_spaces
+		trans_root = trans_dom.root
+		entry.add_child trans_root
+		return document
+	end
+
+	def to_solr_add_string document
+		if @xslt.nil?
+			@xslt = {}
+			@xslt[:nb]  = Nokogiri::XSLT(File.open("/opt/hunnor-dict/hunnor-solr/solr/cores/hunnor-nb/conf/import.xsl", "rb"))
+			@xslt[:hu]  = Nokogiri::XSLT(File.open("/opt/hunnor-dict/hunnor-solr/solr/cores/hunnor-hu/conf/import.xsl", "rb"))
+		end
+		solr_doc = @xslt[@lang].transform document
+		return solr_doc.to_xml(:encoding => "UTF-8", :indent_text => "\t", :indent => 1)
+	end
+
+	def load_forms_for_id id
+		database = Database.new
+		db = database.db
+		tables = database.tables @lang
+		columns = database.columns
+		forms = {}
+		res = db.query "SELECT * FROM #{tables[:forms]} WHERE #{columns[:forms][:id]} = '#{id}' ORDER BY #{columns[:forms][:par]}, #{columns[:forms][:seq]}"
+		res.each do |row|
+			if forms[row[columns[:forms][:par]]].nil?
+				forms[row[columns[:forms][:par]]] = {}
+			end
+			forms[row[columns[:forms][:par]]][row[columns[:forms][:seq]]] = row[columns[:forms][:orth]]
+		end
+		return forms
+	end
+
+	def get_ids_from_entry
+		database = Database.new
+		db = database.db
+		tables = database.tables @lang
+		columns = database.columns
+		ids = []
+		res = db.query "SELECT DISTINCT #{columns[:forms][:id]} FROM #{tables[:forms]} WHERE #{columns[:forms][:entry]} = '#{@entry}' ORDER BY #{columns[:forms][:orth]}"
+		res.each do |row|
+			r_id = row[columns[:forms][:id]]
+			if r_id != @entry
+				ids.push r_id
+			end
+		end
+		return ids
+	end
+
+	def get_forms_a_a forms
+		keys = []
+		case @pos
+		when "adj"
+			keys.push 5
+			keys.push 6
+		when "subst"
+			keys.push 2
+			keys.push 3
+			keys.push 4
+		when "verb"
+			keys.push 4
+			keys.push 6
+			keys.push 7
+		end
+		forms_a = []
+		forms.each do |form_key, form_val|
+			par_a = []
+			keys.each do |key|
+				par_a.push form_val[key]
+			end
+			if !forms_a.include? par_a
+				forms_a.push par_a
+			end
+		end
+		return forms_a
+	end
+
+	def get_infl_codes str
+		h = {}
+		case str
+		when "700:900", "702:902"
+			h['bob'] = "f1:m1"
+			h['suff'] = "-en/-a"
+		when "700:800:810:900", "702:800:810:902"
+			h['bob'] = "f1:m1:n1"
+			h['suff'] = "-en/-a/-et"
+		when "700:801:811:900", "702:802:812:902"
+			h['bob'] = "f1:m1:n2"
+			h['suff'] = "-en/-a/-et"
+		when "700:800:801:810:811:900"
+			h['bob'] = "f1:m1:n3"
+			h['suff'] = "-en/-a/-et"
+		when "700", "700:703", "702"
+			h['bob'] = "m1"
+			h['suff'] = "-en"
+		when "700:800:810"
+			h['bob'] = "m1:n1"
+			h['suff'] = "-en/-et"
+		when "700:801:811", "702:802:812"
+			h['bob'] = "m1:n2"
+			h['suff'] = "-en/-et"
+		when "700:703:800:801:810:811:874:875:876:877", "700:800:801:810:811"
+			h['bob'] = "m1:n3"
+			h['suff'] = "-en/-et"
+		when "711:712", "712"
+			h['bob'] = "m2"
+			h['suff'] = "-eren, -ere, -erne"
+		when "711:712:720:724", "711:712:721", "712:720:724", "712:717:724", "712:721:742"
+			h['bob'] = "m3"
+			h['suff'] = "-eren, -ere/-re/-rer, -erne/-rene"
+		when "800:810"
+			h['bob'] = "n1"
+			h['suff'] = "-et"
+		when "801:811", "802:812"
+			h['bob'] = "n2"
+			h['suff'] = "-et, -er, -ene/-a"
+		when "800:801:810:811", "800:801:810:811:874:875:876:877", "802:804:812:814"
+			h['bob'] = "n3"
+			h['suff'] = "-et, -/-er, -ene/-a"
+		when "700:715:900:915"
+			h['bob'] = "-a/-en, -/-er, -ene"
+			h['suff'] = "-a/-en, -/-er, -ene"
+		when "715:915"
+			h['bob'] = "-a/-en, -, -ene"
+			h['suff'] = "-a/-en, -, -ene"
+		when "790:990"
+			h['bob'] = "-a/-en, -"
+			h['suff'] = "-a/-en, -"
+		when "715", "716"
+			h['bob'] = "-en, -"
+			h['suff'] = "-en, -"
+		when "720", "721"
+			h['bob'] = "-en"
+			h['suff'] = "-en"
+		when "725"
+			h['bob'] = "-men"
+			h['suff'] = "-men"
+		when "780"
+			h['bob'] = "m:pl"
+			h['suff'] = "m:pl"
+		when "790"
+			h['bob'] = "m:none"
+			h['suff'] = "m:none"
+		when "791"
+			h['bob'] = "m:def"
+			h['suff'] = "m:def"
+		when "700:890"
+			h['bob'] = "-en::n:none"
+			h['suff'] = "-en::n:none"
+		when "715:800:810"
+			h['bob'] = "-en, - / n1"
+			h['suff'] = "-en, - / n1"
+		when "790:890"
+			h['bob'] = "m:n:none"
+			h['suff'] = "m:n:none"
+		when "810:811"
+			h['bob'] = "-et, -/-er, -ene"
+			h['suff'] = "-et, -/-er, -ene"
+		when "801:811:850:851"
+			h['bob'] = "-um, -umet/-et, -umer/-er/-a, -uma/-umene/-a/-aene"
+			h['suff'] = "-um, -umet/-et, -umer/-er/-a, -uma/-umene/-a/-aene"
+		when "880"
+			h['bob'] = "n:pl"
+			h['suff'] = "n:pl"
+		when "815:816:826:827"
+			h['bob'] = "-er, -eret, -er/-re, -ra/-rene"
+			h['suff'] = "-er, -eret, -er/-re, -ra/-rene"
+		when "890" ,"895"
+			h['bob'] = "n:none"
+			h['suff'] = "n:none"
+		when "830:831"
+			h['bob'] = "-met, -, -ma/-mene"
+			h['suff'] = "-met, -, -ma/-mene"
+		when "815:816:824:825"
+			h['bob'] = "-d(e)ret, -der/-dre, -dra/-drene"
+			h['suff'] = "-d(e)ret, -der/-dre, -dra/-drene"
+		when "835:836:837:838"
+			h['bob'] = "-d(de)let, -del/dler, -dla/-dlene"
+			h['suff'] = "-d(de)let, -del/dler, -dla/-dlene"
+		when "800:828", "835:836:841:842"
+			h['bob'] = "n"
+			h['suff'] = "-et"
+		when "830:831"
+			h['bob'] = "-met, -, -ma/-mene"
+			h['suff'] = "-met, -, -ma/-mene"
+		when "830:831:832:833"
+			h['bob'] = "-met, -/-mer, -ma/-mene"
+			h['suff'] = "-met, -/-mer, -ma/-mene"
+		when "001:007:010:011:017:019", "001:010:011", "001:010", "002:012:015"
+			h['bob'] = "v1"
+			h['suff'] = "-et/-a"
+		when "001:010:011:020", "001:010:011:021"
+			h['bob'] = "v1:v2"
+			h['suff'] = "-et/-a/-te"
+		when "001:010:011:020:030"
+			h['bob'] = "v1:v2:v3"
+			h['suff'] = "-et/-a/-te/-de"
+		when "001:010:011:030"
+			h['bob'] = "v1:v3"
+			h['suff'] = "-et/-a/-de"
+		when "001:010:011:043"
+			h['bob'] = "v1:v4"
+			h['suff'] = "-et/-a/-dde"
+		when "020"
+			h['bob'] = "v2"
+			h['suff'] = "-te"
+		when "020:030"
+			h['bob'] = "v2:v3"
+			h['suff'] = "-te/-de"
+		when "030"
+			h['bob'] = "v3"
+			h['suff'] = "-de"
+		when "040", "040:041", "040:042" ,"043"
+			h['bob'] = "v4"
+			h['suff'] = "-dde"
+		when "500"
+			h['bob'] = "a1"
+			h['suff'] = "-t, -e"
+		when "500:504"
+			h['bob'] = "a1:a2"
+			h['suff'] = "-t/-, -e"
+		when "504", "508"
+			h['bob'] = "a2"
+			h['suff'] = "-, -e"
+		when "504:512", "501:503:504:512"
+			h['bob'] = "a2:a3"
+			h['suff'] = "-, -/-e"
+		when "513", "514"
+			h['bob'] = "a3"
+			h['suff'] = "-, -"
+		when "504:534"
+			h['bob'] = "a4"
+			h['suff'] = "-et, -ete/-ede"
+		when "560"
+			h['bob'] = "a5"
+			h['suff'] = "-ent, -ne"
+		end
+		return h
+	end
+
+	def remove_spaces str
+		output = ""
+		output = str.gsub />[ \n\r\t]+</, "><"
+		return output
+	end
+
 	def ==(other)
 		@id == other.id
 		@forms == other.forms
@@ -321,4 +658,3 @@ class Entry
 	end
 
 end
-
