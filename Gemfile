@@ -9,6 +9,7 @@ gem 'omniauth-linkedin'
 gem 'omniauth-twitter'
 
 gem 'mysql2'
+gem 'rsolr'
 gem 'ya2yaml'
 gem 'nokogiri'
 

@@ -10,8 +10,8 @@ HunNorService::Application.routes.draw do
 	get '/priv', :to => 'priv#index'
 	get '/priv/list', :to => 'priv#list'
 	get '/priv/edit', :to => 'priv#edit'
-	get '/priv/save', :to => 'priv#save'
-	get '/priv/delete', :to => 'priv#delete'
+	post '/priv/save', :to => 'priv#save'
+	post '/priv/delete', :to => 'priv#delete'
 
 	get '/pub', :to => 'pub#index'
 	get '/pub/search', :to => 'pub#search'

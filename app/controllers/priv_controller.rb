@@ -112,20 +112,6 @@ class PrivController < ApplicationController
 		@errors = results[:errors]
 		@sql = results[:sql]
 		@clock = Time.new
-		if @errors.empty?
-			solr_entry = Entry.new lang, entry.id, {:trans => true}, nil
-			if solr_entry.id == solr_entry.entry
-				solr_doc = solr_entry.to_xml_doc
-				solr_add_string = solr_entry.to_solr_add_string solr_doc
-				if lang = :hu
-					solr_url = "http://localhost:8080/solr/hunnor-hu/update"
-					response = http.post(solr_url, solr_add_string)
-				elsif lang = :nb
-					solr_url = "http://localhost:8080/solr/hunnor-nb/update"
-					response = http.post(solr_url, solr_add_string)
-				end
-			end
-		end
 	end
 
 	def delete
@@ -142,13 +128,6 @@ class PrivController < ApplicationController
 			if refs.empty?
 				@sql = entry.delete
 				@deleted = true
-				if params[:entrylang].to_sym = :hu
-					solr_url = "http://localhost:8080/solr/hunnor-hu/update"
-					response = http.post(solr_url, "<delete><id>#{params[:id]}</id></delete>")
-				elsif params[:entrylang].to_sym = :nb
-					solr_url = "http://localhost:8080/solr/hunnor-nb/update"
-					response = http.post(solr_url, "<delete><id>#{params[:id]}</id></delete>")
-				end
 			else
 				@error = "A megadott szócikk nem tötölhető, mert a következő szócikkek hivatkoznak rá: " + refs.join(", ")
 			end

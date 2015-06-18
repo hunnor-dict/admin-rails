@@ -123,7 +123,7 @@ class Entry
 		trans_string = "<senseValidation xmlns=\"http://dict.hunnor.net\">" + trans + "</senseValidation>"
 		trans_xml = Nokogiri::XML trans_string
 		xml_errors += trans_xml.errors
-		sense_schema = Nokogiri::XML::Schema(File.read(Rails.root.to_s + "/public/port/xml/hunnor.net.Schema.xsd"))
+		sense_schema = Nokogiri::XML::Schema(File.read("/opt/hunnor-dict/hunnor-export/hunnor.net.Schema.Editor.xsd"))
 		xml_errors += sense_schema.validate trans_xml
 		return xml_errors
 	end
@@ -182,11 +182,21 @@ class Entry
 			else
 				@entry = values[:entry]
 			end
+			@forms = {}
 			forms_new.each do |par_key, par_val|
+				if @forms[par_key].nil?
+					@forms[par_key] = {}
+				end
 				par_val.each do |seq_key, seq_val|
+					@forms[par_key][seq_key] = seq_val
+					if @form.nil?
+						@form = seq_key
+					end
 					sql.push "INSERT INTO #{tables[:forms]} (#{columns[:forms][:id]}, #{columns[:forms][:entry]}, #{columns[:forms][:orth]}, #{columns[:forms][:pos]}, #{columns[:forms][:par]}, #{columns[:forms][:seq]}, #{columns[:forms][:status]}) VALUES('#{@id}', '#{@entry}', '#{db.escape(seq_val)}', '#{db.escape(values[:pos])}', '#{db.escape(par_key)}', '#{seq_key}', '#{values[:status]}')"
 				end
 			end
+			@pos = values[:pos]
+			@status = values[:status]
 		else
 			action = "update"
 			form_global_changes = []
@@ -250,9 +260,7 @@ class Entry
 			errors += trans_errors
 		end
 
-		# execute queries if no errors
 		if errors.empty?
-			# add edit log entry
 			clock = Time.new
 			timestamp = clock.strftime("%Y%m%d%H%M%S")
 			sql.push "INSERT INTO hn_log_edit (editor_id, lang, entry_id, action, timestamp) VALUES ('#{editor}', '#{@lang}', '#{id}', '#{action}', '#{timestamp}')"
@@ -261,7 +269,9 @@ class Entry
 			end
 		end
 
-		# return errors and queries
+		solr = Solr.new
+		solr.save @lang, @id, @entry, to_xml_doc
+
 		ret_value = {:errors => errors, :sql => sql}
 		db.close
 		return ret_value
@@ -280,6 +290,10 @@ class Entry
 			db.query sql_query
 		end
 		database.close
+
+		solr = Solr.new
+		solr.delete @lang, @id, @entry
+
 		return sql
 	end
 
@@ -410,16 +424,6 @@ class Entry
 		trans_root = trans_dom.root
 		entry.add_child trans_root
 		return document
-	end
-
-	def to_solr_add_string document
-		if @xslt.nil?
-			@xslt = {}
-			@xslt[:nb]  = Nokogiri::XSLT(File.open("/opt/hunnor-dict/hunnor-solr/solr/cores/hunnor-nb/conf/import.xsl", "rb"))
-			@xslt[:hu]  = Nokogiri::XSLT(File.open("/opt/hunnor-dict/hunnor-solr/solr/cores/hunnor-hu/conf/import.xsl", "rb"))
-		end
-		solr_doc = @xslt[@lang].transform document
-		return solr_doc.to_xml(:encoding => "UTF-8", :indent_text => "\t", :indent => 1)
 	end
 
 	def load_forms_for_id id
