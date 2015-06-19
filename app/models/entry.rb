@@ -123,7 +123,7 @@ class Entry
 		trans_string = "<senseValidation xmlns=\"http://dict.hunnor.net\">" + trans + "</senseValidation>"
 		trans_xml = Nokogiri::XML trans_string
 		xml_errors += trans_xml.errors
-		sense_schema = Nokogiri::XML::Schema(File.read("/opt/hunnor-dict/hunnor-export/hunnor.net.Schema.Editor.xsd"))
+		sense_schema = Nokogiri::XML::Schema(File.open("/opt/hunnor-dict/hunnor-export/hunnor.net.Schema.Editor.xsd", "rb"))
 		xml_errors += sense_schema.validate trans_xml
 		return xml_errors
 	end

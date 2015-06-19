@@ -1,7 +1,7 @@
 class Solr
 
 	def initialize
-		@solr {}
+		@solr = {}
 		@solr[:hu] = RSolr.connect :url => ENV["SOLR_URL"] + "/hunnor-hu"
 		@solr[:nb] = RSolr.connect :url => ENV["SOLR_URL"] + "/hunnor-nb"
 		# TODO
@@ -14,6 +14,7 @@ class Solr
 		solr_doc = @xsl[lang].transform document
 		data = solr_doc.to_xml(:encoding => "UTF-8", :indent_text => "\t", :indent => 1)
 		@solr[lang].update :data => data
+		@solr[lang].commit :commit_attributes => {}
 	end
 
 	def delete lang, id, entry
