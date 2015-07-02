@@ -256,6 +256,7 @@ class Entry
 					sql.push "INSERT INTO #{tables[:trans]} (#{columns[:trans][:id]}, #{columns[:trans][:trans]}) VALUES ('#{@id}', '#{db.escape(values[:trans])}')"
 				end
 			end
+			@trans = values[:trans]
 		else
 			errors += trans_errors
 		end
