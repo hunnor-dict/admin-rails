@@ -94,7 +94,8 @@ function deleteEntry() {
 		var entryURL = "/priv/delete";
 		$.post(entryURL, {
 			entrylang: $("#entrylang").val(),
-			id: $("#id").val()
+			id: $("#id").val(),
+			entry: $("#entry").val()
 			}, function(data) {
 				$("#priv-edit-results").html(data);
 				loadEntry($("#entrylang").val(), "N", "");
