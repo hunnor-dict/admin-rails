@@ -18,8 +18,9 @@ class Solr
 	end
 
 	def delete lang, id, entry
-		if id == entry
+		if id.to_s == entry.to_s
 			@solr[lang].delete_by_id id
+			@solr[lang].commit :commit_attributes => {}
 		end
 	end
 
