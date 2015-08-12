@@ -12,7 +12,7 @@
 		<% if @lang == "nb" %>
 			<%= entry.forms.keys.join ":" %>
 			<% if entry.forms.keys.join(":") == "0" %>
-				<%= [!] %>
+				<%= " [!]" %>
 			<% end %>
 		<% end %>
 		</li>
