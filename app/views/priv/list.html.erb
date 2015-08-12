@@ -11,6 +11,9 @@
 		<%= raw "<a href=\"javascript:loadEntry('#{entry.lang}', '#{entry.id}', null);\" class=\"stat#{entry.status}\"><strong>#{entry.form}</strong></a> #{entry.pos}" %>
 		<% if @lang == "nb" %>
 			<%= entry.forms.keys.join ":" %>
+			<% if entry.forms.keys.join(":") == "0" %>
+				<%= [!] %>
+			<% end %>
 		<% end %>
 		</li>
 	<% end %>
