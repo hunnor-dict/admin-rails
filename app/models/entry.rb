@@ -421,9 +421,11 @@ class Entry
 		root = document.root
 		entry = root.at "entryGrp/entry"
 		trans_without_spaces = remove_spaces @trans
-		trans_dom = Nokogiri::XML trans_without_spaces
+		trans_dom = Nokogiri::XML "<foo>" + trans_without_spaces + "</foo>"
 		trans_root = trans_dom.root
-		entry.add_child trans_root
+		trans_root.xpath("senseGrp").each do |sense_grp|
+			entry.add_child sense_grp
+		end
 		return document
 	end
 
