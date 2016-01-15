@@ -480,7 +480,9 @@ class Entry
 		forms.each do |form_key, form_val|
 			par_a = []
 			keys.each do |key|
-				par_a.push form_val[key]
+				if !form_val[key].nil? && form_val[key] != ""
+					par_a.push form_val[key]
+				end
 			end
 			if !forms_a.include? par_a
 				forms_a.push par_a
