@@ -11,9 +11,13 @@ class Solr
 	end
 
 	def save lang, id, entry, document
-		solr_doc = @xsl[lang].transform document
-		data = solr_doc.to_xml(:encoding => "UTF-8", :indent_text => "\t", :indent => 1)
-		@solr[lang].update :data => data
+		if id.to_s == entry.to_s
+			solr_doc = @xsl[lang].transform document
+			data = solr_doc.to_xml(:encoding => "UTF-8", :indent_text => "\t", :indent => 1)
+			@solr[lang].update :data => data
+		else
+			@solr[lang].delete_by_id id
+		end
 		@solr[lang].commit :commit_attributes => {}
 	end
 
