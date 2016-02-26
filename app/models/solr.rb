@@ -2,8 +2,8 @@ class Solr
 
 	def initialize
 		@solr = {}
-		@solr[:hu] = RSolr.connect :url => ENV["SOLR_URL"] + "/hunnor-hu"
-		@solr[:nb] = RSolr.connect :url => ENV["SOLR_URL"] + "/hunnor-nb"
+		@solr[:hu] = RSolr.connect :url => ENV["SOLR_URL"] + "/hunnor.hu"
+		@solr[:nb] = RSolr.connect :url => ENV["SOLR_URL"] + "/hunnor.nb"
 		solr_dir = ENV["SOLR_DIR"]
 		@xsl = {}
 		@xsl[:nb]  = Nokogiri::XSLT(File.open("#{solr_dir}/hunnor-nb/conf/import.xsl", "rb"))
