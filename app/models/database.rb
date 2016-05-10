@@ -4,7 +4,11 @@ class Database
 	attr_accessor :db
 
 	def initialize
-		@db = Mysql2::Client.new(:host => ENV["DB_MYSQL_HOST"], :username => ENV["DB_MYSQL_USER"], :password => ENV["DB_MYSQL_PASS"], :database => ENV["DB_MYSQL_DB"])
+		@db = Mysql2::Client.new(
+			:host => ENV["DB_MYSQL_HOST"] || "localhost",
+			:username => ENV["DB_MYSQL_USER"] || "hunnor",
+			:password => ENV["DB_MYSQL_PASS"] || "hunnor",
+			:database => ENV["DB_MYSQL_DB"] || "hunnor")
 	end
 
 	def close
