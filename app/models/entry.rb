@@ -274,7 +274,7 @@ class Entry
 		solr.save @lang, @id, @entry, to_xml_doc
 
 		ret_value = {:errors => errors, :sql => sql}
-		db.close
+		database.close
 		return ret_value
 
 	end
@@ -350,27 +350,29 @@ class Entry
 							pos.text @pos
 						end
 						infl_codes_str = @forms.keys.join ":"
-						h = get_infl_codes infl_codes_str
-						if !h["bob"].nil?
-							form.inflCode(:type => "bob") do |infl_code|
-								infl_code.text h["bob"]
-							end
-						end
-						if !h["suff"].nil?
-							form.inflCode(:type => "suff") do |infl_code|
-								infl_code.text h["suff"]
-							end
-						end
-						forms_a_a = get_forms_a_a @forms
-						forms_a_a.each_with_index do |forms_a_val, forms_a_key|
-							if !forms_a_val.empty?
-							form.inflPar do |infl_par|
-								forms_a_val.each_with_index do |ff_val, ff_key|
-									infl_par.inflSeq(:form => "#{forms_a_key}-#{ff_key}") do |infl_seq|
-										infl_seq.text ff_val
-									end
+						if @pos == "adj" || @pos == "subst" || @pos == "verb"
+							h = get_infl_codes infl_codes_str
+							if !h["bob"].nil?
+								form.inflCode(:type => "bob") do |infl_code|
+									infl_code.text h["bob"]
 								end
 							end
+							if !h["suff"].nil?
+								form.inflCode(:type => "suff") do |infl_code|
+									infl_code.text h["suff"]
+								end
+							end
+							forms_a_a = get_forms_a_a @forms
+							forms_a_a.each_with_index do |forms_a_val, forms_a_key|
+								if !forms_a_val.empty?
+								form.inflPar do |infl_par|
+									forms_a_val.each_with_index do |ff_val, ff_key|
+										infl_par.inflSeq(:form => "#{forms_a_key}-#{ff_key}") do |infl_seq|
+											infl_seq.text ff_val
+										end
+									end
+								end
+								end
 							end
 						end
 					end
@@ -385,28 +387,30 @@ class Entry
 								# orth/@n only used in PDF
 								orth.text form_orth
 							end
-							infl_codes_str = forms.keys.join ":"
-							h = get_infl_codes infl_codes_str
-							if !h["bob"].nil?
-								form.inflCode(:type => "bob") do |infl_code|
-									infl_code.text h["bob"]
-								end
-							end
-							if !h["suff"].nil?
-								form.inflCode(:type => "suff") do |infl_code|
-									infl_code.text h["suff"]
-								end
-							end
-							forms_a_a = get_forms_a_a additional_form
-							forms_a_a.each_with_index do |forms_a_val, forms_a_key|
-								if !forms_a_val.empty?
-								form.inflPar do |infl_par|
-									forms_a_val.each_with_index do |ff_val, ff_key|
-										infl_par.inflSeq(:form => "#{forms_a_key}-#{ff_key}") do |infl_seq|
-											infl_seq.text ff_val
-										end
+							infl_codes_str = additional_form.keys.join ":"
+							if @pos == "adj" || @pos == "subst" || @pos == "verb"
+								h = get_infl_codes infl_codes_str
+								if !h["bob"].nil?
+									form.inflCode(:type => "bob") do |infl_code|
+										infl_code.text h["bob"]
 									end
 								end
+								if !h["suff"].nil?
+									form.inflCode(:type => "suff") do |infl_code|
+										infl_code.text h["suff"]
+									end
+								end
+								forms_a_a = get_forms_a_a additional_form
+								forms_a_a.each_with_index do |forms_a_val, forms_a_key|
+									if !forms_a_val.empty?
+									form.inflPar do |infl_par|
+										forms_a_val.each_with_index do |ff_val, ff_key|
+											infl_par.inflSeq(:form => "#{forms_a_key}-#{ff_key}") do |infl_seq|
+												infl_seq.text ff_val
+											end
+										end
+									end
+									end
 								end
 							end
 						end
@@ -442,6 +446,7 @@ class Entry
 			end
 			forms[row[columns[:forms][:par]]][row[columns[:forms][:seq]]] = row[columns[:forms][:orth]]
 		end
+		database.close
 		return forms
 	end
 
@@ -458,6 +463,7 @@ class Entry
 				ids.push r_id
 			end
 		end
+		database.close
 		return ids
 	end
 
