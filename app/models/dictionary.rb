@@ -1,67 +1,6 @@
 #encoding: utf-8
 class Dictionary
 
-	def hits
-		h = {}
-		database = Database.new
-		db = database.db
-		sql = "SELECT COUNT(1) AS n FROM logSearch";
-		res = db.query sql
-		res.each do |row|
-			h["total"] = row["n"]
-		end
-		sql = "SELECT COUNT(1) AS n FROM logSearch WHERE qRes = 1";
-		res = db.query sql
-		res.each do |row|
-			h["found"] = row["n"]
-		end
-		return h
-	end
-
-	def missing
-		a = []
-		database = Database.new
-		db = database.db
-		sql = "SELECT qTerm, COUNT(1) AS n FROM logSearch WHERE qRes = 0 GROUP BY qTerm ORDER BY n DESC LIMIT 50"
-		res = db.query sql
-		res.each do |row|
-			h = {:term => row["qTerm"], :n => row["n"]}
-			a.push h
-		end
-		return a
-	end
-
-	def searches
-		a = []
-		database = Database.new
-		db = database.db
-		sql = "SELECT qTerm, COUNT(1) AS n FROM logSearch GROUP BY qTerm ORDER BY n DESC LIMIT 50"
-		res = db.query sql
-		res.each do |row|
-			h = {:term => row["qTerm"], :n => row["n"]}
-			a.push h
-		end
-		return a
-	end
-
-	def stats
-		h = {}
-		langs = [:hu, :nb]
-		database = Database.new
-		db = database.db
-		columns = database.columns
-		langs.each do |lang|
-			tables = database.tables lang
-			sql = "SELECT COUNT(DISTINCT #{columns[:forms][:id]}) AS n FROM #{tables[:forms]} WHERE "
-			sql += "#{columns[:forms][:status]} > 0"
-			res = db.query sql
-			res.each do |row|
-				h.store lang, row["n"]
-			end
-		end
-		return h
-	end
-
 	def suggest term
 		suggestions = {}
 		langs = [:hu, :nb]

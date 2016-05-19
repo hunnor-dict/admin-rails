@@ -13,13 +13,7 @@ HunNorService::Application.routes.draw do
 	post '/priv/save', :to => 'priv#save'
 	post '/priv/delete', :to => 'priv#delete'
 
-	get '/pub', :to => 'pub#index'
 	get '/pub/search', :to => 'pub#search'
 	get '/pub/suggest', :to => 'pub#suggest'
-
-	get '/stat/count', :to => 'pub#stat'
-	get '/stat/hits', :to => 'pub#hits'
-	get '/stat/searches', :to => 'pub#searches'
-	get '/stat/missing', :to => 'pub#missing'
 
 end
