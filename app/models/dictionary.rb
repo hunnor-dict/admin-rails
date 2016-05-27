@@ -261,7 +261,7 @@ class Dictionary
 						orth_tag.set_attribute "n", "0"
 					end
 				end
-				entry_s = entry_tag.to_xml ({:encoding => 'UTF-8'})
+				entry_s = entry_tag.to_xml
 				lines_to_add = ""
 				entry_s.each_line do |line|
 					line = "\t\t" + line
@@ -325,7 +325,7 @@ class Dictionary
 						orth_tag.set_attribute "n", "0"
 					end
 				end
-				entry_s = entry_tag.to_xml ({:encoding => 'UTF-8'})
+				entry_s = entry_tag.to_xml
 				lines_to_add = ""
 				entry_s.each_line do |line|
 					line = "\t\t" + line
