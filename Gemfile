@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'rails', '4.2.1'
+gem 'rails', '4.2.7'
 
 gem 'omniauth'
 gem 'omniauth-facebook'
