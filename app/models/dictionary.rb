@@ -302,7 +302,7 @@ class Dictionary
 				letter = letter.upcase
 			end
 			file.write "\t<entryGrp head=\"#{letter}\">\n"
-			sql = "SELECT DISTINCT entry, CASE pos WHEN 'subst' THEN '1' WHEN 'verb' THEN '2' WHEN 'adj' THEN '3' ELSE '99' END AS pos_key FROM hn_nob_segment WHERE #{letter_sql} AND status > 0 AND seq < 2 AND id = entry ORDER BY orth, pos_key, pos, entry"
+			sql = "SELECT entry, CASE pos WHEN 'subst' THEN '1' WHEN 'verb' THEN '2' WHEN 'adj' THEN '3' ELSE '99' END AS pos_key FROM hn_nob_segment WHERE #{letter_sql} AND status > 0 AND seq < 2 AND id = entry GROUP BY entry ORDER BY orth, pos_key, pos, entry"
 			res = db.query sql
 			res.each do |row|
 				entry_id = row["entry"]
