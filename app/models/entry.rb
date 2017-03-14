@@ -120,10 +120,15 @@ class Entry
 			xml_errors.push "Translation is NIL."
 			return xml_errors
 		end
-		trans_string = "<senseValidation xmlns=\"http://dict.hunnor.net\">" + trans + "</senseValidation>"
+		trans_string = "<hnDict updated=\"1970-01-01\" xmlns=\"http://dict.hunnor.net\"><entryGrp head=\"A\"><entry id=\"1\"><formGrp><form><orth n=\"1\">A</orth></form></formGrp>" + trans + "</entry></entryGrp></hnDict>"
 		trans_xml = Nokogiri::XML trans_string
 		xml_errors += trans_xml.errors
-		sense_schema = Nokogiri::XML::Schema(File.open("/opt/hunnor-dict/hunnor-export/hunnor.net.Schema.Editor.xsd", "rb"))
+		sense_schema = nil
+		if @lang == :hu
+			sense_schema = Nokogiri::XML::Schema(File.open("#{ENV["XSD_DIR"]}/hunnor.net.Schema.HN.xsd", "rb"))
+		elsif @lang == :nb
+			sense_schema = Nokogiri::XML::Schema(File.open("#{ENV["XSD_DIR"]}/hunnor.net.Schema.NH.xsd", "rb"))
+		end
 		xml_errors += sense_schema.validate trans_xml
 		return xml_errors
 	end
