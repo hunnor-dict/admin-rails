@@ -332,14 +332,7 @@ class Entry
 	end
 
 	def bob_link mode
-		case mode
-		when :deprecated
-			link = "http://www.dokpro.uio.no/perl/ordboksoek/ordbok.cgi?OPP=#{@form}&ordbok=bokmaal&s=n&alfabet=e&renset=j"
-		when :fallback
-			link = "http://www.dokpro.uio.no/perl/ordboksoek/ordbok_retro.cgi?OPP=#{@form}&bokmaal=S%F8k+i+Bokm%E5lsordboka&ordbok=bokmaal&alfabet=e&renset=j"
-		else
-			link = "http://www.nob-ordbok.uio.no/perl/ordbok.cgi?OPP=#{@form}&bokmaal=+&ordbok=begge"
-		end
+		return "http://ordbok.uib.no/perl/ordbok.cgi?OPP=#{@form}&ant_bokmaal=5&ant_nynorsk=5&bokmaal=+&ordbok=bokmaal"
 	end
 
 	def to_xml_doc
