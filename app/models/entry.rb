@@ -275,6 +275,14 @@ class Entry
 			end
 		end
 
+		@forms = forms_new
+		par_keys = @forms.keys.sort!
+		par_key = par_keys.first
+		seq_map = @forms.fetch(par_key)
+		seq_keys = seq_map.keys.sort!
+		seq_key = seq_keys.first
+		@form = seq_map.fetch(seq_key)
+
 		solr = Solr.new
 		solr.save @lang, @id, @entry, to_xml_doc
 
