@@ -125,9 +125,9 @@ class Entry
 		xml_errors += trans_xml.errors
 		sense_schema = nil
 		if @lang == :hu
-			sense_schema = Nokogiri::XML::Schema(File.open("#{ENV["XSD_DIR"]}/hunnor.net.Schema.HN.xsd", "rb"))
+			sense_schema = Nokogiri::XML::Schema(File.open(Rails.root.join("public", "hunnor.net.Schema.HN.xsd"), "rb"))
 		elsif @lang == :nb
-			sense_schema = Nokogiri::XML::Schema(File.open("#{ENV["XSD_DIR"]}/hunnor.net.Schema.NH.xsd", "rb"))
+			sense_schema = Nokogiri::XML::Schema(File.open(Rails.root.join("public", "hunnor.net.Schema.NH.xsd"), "rb"))
 		end
 		xml_errors += sense_schema.validate trans_xml
 		return xml_errors

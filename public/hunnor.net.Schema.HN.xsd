@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns="http://dict.hunnor.net" elementFormDefault="qualified" targetNamespace="http://dict.hunnor.net" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:include schemaLocation="hunnor.net.Schema.xsd"/>
+  <xs:simpleType name="posType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="ige" />
+      <xs:enumeration value="fn" />
+      <xs:enumeration value="hsz" />
+      <xs:enumeration value="nével" />
+      <xs:enumeration value="röv" />
+      <xs:enumeration value="névm" />
+      <xs:enumeration value="mn" />
+      <xs:enumeration value="ksz" />
+      <xs:enumeration value="módsz" />
+      <xs:enumeration value="névut" />
+      <xs:enumeration value="igek" />
+      <xs:enumeration value="isz" />
+      <xs:enumeration value="szn" />
+      <xs:enumeration value="" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="inflTypeType">
+    <xs:restriction base="xs:string">
+    </xs:restriction>
+  </xs:simpleType>
+</xs:schema>
+

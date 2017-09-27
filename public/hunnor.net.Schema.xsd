@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns="http://dict.hunnor.net" elementFormDefault="qualified" targetNamespace="http://dict.hunnor.net" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="hnDict" type="hnDictType" />
+  <xs:complexType name="hnDictType">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="entryGrp" type="entryGrpType" />
+    </xs:sequence>
+    <xs:attribute name="updated" type="xs:date" use="required" />
+  </xs:complexType>
+  <xs:complexType name="entryGrpType">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="entry" type="entryType" />
+    </xs:sequence>
+    <xs:attribute name="head" type="headType" use="required" />
+  </xs:complexType>
+  <xs:simpleType name="headType">
+    <xs:restriction base="xs:string">
+      <!--xs:length value="1" /-->
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:complexType name="entryType">
+    <xs:sequence>
+      <xs:element minOccurs="1" maxOccurs="1" name="formGrp" type="formGrpType" />
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="senseGrp" type="senseGrpType" />
+    </xs:sequence>
+    <xs:attribute name="id" type="xs:string" use="required" />
+  </xs:complexType>
+  <xs:complexType name="formGrpType">
+    <xs:sequence>
+      <xs:element minOccurs="1" maxOccurs="unbounded" name="form" type="formType" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="orthType" mixed="true">
+    <xs:attribute name="n" type="xs:string" use="required" />
+  </xs:complexType>
+  <xs:complexType name="formType">
+    <xs:sequence>
+      <xs:element minOccurs="1" maxOccurs="unbounded" name="orth" type="orthType" />
+      <xs:element minOccurs="0" maxOccurs="1" name="pos" type="posType" />
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="inflCode" type="inflCodeType" />
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="inflPar" type="inflParType" />
+    </xs:sequence>
+    <xs:attribute name="primary" type="priType" use="optional" />
+  </xs:complexType>
+  <xs:complexType name="inflCodeType" mixed="true">
+    <xs:attribute name="type" type="xs:string" use="required" />
+  </xs:complexType>
+  <xs:complexType name="inflParType">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="inflSeq" type="inflSeqType" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="inflSeqType" mixed="true">
+    <xs:attribute name="form" type="xs:string" use="required" />
+  </xs:complexType>
+  <xs:simpleType name="priType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="yes" />
+      <xs:enumeration value="no" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:complexType name="inflType" mixed="true">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="inflForm" type="inflFormType" />
+    </xs:sequence>
+    <xs:attribute name="type" type="inflTypeType" use="required" />
+  </xs:complexType>
+  <xs:complexType name="inflFormType" mixed="true">
+    <xs:attribute name="form" type="xs:string" use="required" />
+  </xs:complexType>
+  <xs:complexType name="senseGrpType">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="lbl" type="lblType" />
+      <xs:element minOccurs="1" maxOccurs="unbounded" name="sense" type="senseType" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="senseType">
+    <xs:sequence>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="lbl" type="lblType" />
+        <xs:element name="trans" type="transType" />
+      </xs:choice>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element minOccurs="0" maxOccurs="unbounded" name="eg" type="egType" />
+      </xs:choice>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="lblType" mixed="true">
+    <xs:attribute name="lang" type="langType" use="optional" />
+    <xs:attribute name="type" type="xs:string" use="optional" />
+  </xs:complexType>
+  <xs:simpleType name="langType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="hun" />
+      <xs:enumeration value="nob" />
+      <xs:enumeration value="lat" />
+      <xs:enumeration value="all" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:complexType name="transType" mixed="true">
+    <xs:attribute name="lang" type="langType" use="optional" />
+  </xs:complexType>
+  <xs:complexType name="egType">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="lbl" type="lblType" />
+      <xs:element minOccurs="1" maxOccurs="unbounded" name="q" type="xs:string" />
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="lbl" type="lblType" />
+        <xs:element name="trans" type="transType" />
+      </xs:choice>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns="http://dict.hunnor.net" elementFormDefault="qualified" targetNamespace="http://dict.hunnor.net" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:include schemaLocation="hunnor.net.Schema.xsd"/>
+  <xs:simpleType name="posType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="adj" />
+      <xs:enumeration value="adv" />
+      <xs:enumeration value="fork" />
+      <xs:enumeration value="inf" />
+      <xs:enumeration value="interj" />
+      <xs:enumeration value="konj" />
+      <xs:enumeration value="prep" />
+      <xs:enumeration value="pron" />
+      <xs:enumeration value="subst" />
+      <xs:enumeration value="tall" />
+      <xs:enumeration value="verb" />
+      <xs:enumeration value="art" />
+      <xs:enumeration value="sbu" />
+      <xs:enumeration value="prep+sub" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="inflTypeType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="bob" />
+      <xs:enumeration value="par" />
+    </xs:restriction>
+  </xs:simpleType>
+</xs:schema>
+
