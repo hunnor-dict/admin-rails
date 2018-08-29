@@ -313,7 +313,10 @@ class Dictionary
 				orth_tags.each do |orth_tag|
 					orth = orth_tag.content
 					max = orth_max[orth]
-					if max > 1
+					if max.nil?
+						file.write "<!-- null counter for #{orth} (#{entry_id}) -->\n"
+					end
+					if !max.nil? && max > 1
 						count = orth_count[orth]
 						if orth_count[orth].nil?
 							orth_count[orth] = 1
