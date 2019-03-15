@@ -5,7 +5,7 @@ gem 'rails', '4.2.11.1'
 gem 'omniauth'
 gem 'omniauth-facebook'
 gem 'omniauth-google-oauth2'
-gem 'omniauth-linkedin'
+gem 'omniauth-linkedin-oauth2'
 gem 'omniauth-twitter'
 
 gem 'mysql2'
