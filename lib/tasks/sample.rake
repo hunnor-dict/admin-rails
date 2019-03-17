@@ -115,9 +115,7 @@ end
 def populate_editors
 	$DB_LINK.query "INSERT INTO hn_adm_editors (id, provider, uid) VALUES " \
 		"('ardavan', 'facebook', '570487915')," \
-		"('ardavan', 'google_oauth2', '104643950896552677888')," \
 		"('ardavan', 'linkedin', 'TRpE2vvpzM')," \
-		"('ardavan', 'twitter', '68137658');"
 end
 
 namespace :hn do

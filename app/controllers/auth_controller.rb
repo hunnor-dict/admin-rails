@@ -8,12 +8,8 @@
 			case @provider
 			when "facebook"
 				@link = {:label => "Facebook", :href => "www.facebook.com"}
-			when "google_oauth2"
-				@link = {:label => "Google", :href => "www.google.com"}
 			when "linkedin"
 				@link = {:label => "LinkedIn", :href => "www.linkedin.com"}
-			when "twitter"
-				@link = {:label => "Twitter", :href => "www.twitter.com"}
 			else
 				@link = {:label => "", :href => ""}
 			end
