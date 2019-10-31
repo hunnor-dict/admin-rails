@@ -1,6 +1,15 @@
 source 'https://rubygems.org'
 
-gem 'rails', '5.1.7'
+gem 'actionmailer', '5.1.7'
+gem 'actionpack', '5.1.7'
+gem 'actionview', '5.1.7'
+gem 'activejob', '5.1.7'
+gem 'activemodel', '5.1.7'
+gem 'activerecord', '5.1.7'
+gem 'activesupport', '5.1.7'
+gem 'bundler', '>= 1.3.0'
+gem 'railties', '5.1.7'
+gem 'sprockets-rails', '>= 2.0.0'
 
 gem 'omniauth'
 gem 'omniauth-facebook'
