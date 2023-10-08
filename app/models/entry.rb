@@ -104,7 +104,7 @@ class Entry
 		when :hu
 			["ige", "fn", "hsz", "nével", "röv", "névm", "mn", "ksz", "módsz", "névut", "isz", "szn", "igek"].include? pos
 		when :nb
-			["subst", "verb", "adj", "adv", "prep", "pron", "tall", "konj", "interj", "fork", "inf", "art"].include? pos
+			["subst", "verb", "adj", "adv", "prep", "pron", "tall", "konj", "subj", "interj", "fork", "inf", "art"].include? pos
 		else
 			false
 		end
